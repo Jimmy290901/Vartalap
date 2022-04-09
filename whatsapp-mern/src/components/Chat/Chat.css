@@ -8,7 +8,7 @@
     display: flex;
     padding: 20px;
     background-color: #f0f2f5;
-    cursor: pointer;
+    cursor: pointer;    /* makes cursor from click to palm icon */
 }
 
 
@@ -36,6 +36,39 @@
     align-items: center;
 }
 
-.messages {
+.chat_body {
     flex: 1;
+    background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+    overflow: scroll;
+}
+
+.chat_message {
+    width: 100%;
+    background-color: white;
+    width: fit-content;
+    border-radius: 7.5px;
+    margin: 20px;
+    padding: 6px 7px 8px 9px;
+    max-width: 70%;
+}
+
+.chat_msg_username > h3 {
+    font-size: 12.8px;
+}
+
+.chat_msg_content {
+    margin-right: 50px;
+}
+
+.chat_msg_time {
+    font-size: 0.7rem;
+    position: relative;
+    top: 5px;
+    margin-left: auto;
+    width: fit-content;
+}
+
+.user_message {
+    background-color: #d9fdd3;
+    margin-left: auto;
 }

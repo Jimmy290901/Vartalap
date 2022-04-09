@@ -48,6 +48,7 @@
     color: #3b4a54;
     outline-style: none;    /* disables input box highlight when clicked */
     padding: 0px 10px;
+    flex: 1;
 }
 
 .sidebar_search_container > .MuiSvgIcon-root {

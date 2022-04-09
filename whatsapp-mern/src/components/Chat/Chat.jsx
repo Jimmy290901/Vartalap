@@ -21,8 +21,30 @@ function Chat() {
                     </IconButton>                
                 </div>
             </div>
-            <div className="messages">
-                <p>Chat Messages</p>
+            <div className="chat_body">
+                <p className="chat_message">
+                    <div className="chat_msg_username"><h3>Name</h3></div>
+                    <span className="chat_msg_content">
+                        This is a Message
+                    </span>
+                    <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
+                </p>
+
+                <p className="chat_message user_message">
+                    <div className="chat_msg_username"><h3>Name</h3></div>
+                    <span className="chat_msg_content">
+                        This is a Message
+                    </span>
+                    <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
+                </p>
+
+                <p className="chat_message">
+                    <div className="chat_msg_username"><h3>Name</h3></div>
+                    <span className="chat_msg_content">
+                        This is a Message
+                    </span>
+                    <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
+                </p>
             </div>
         </div>
     );
