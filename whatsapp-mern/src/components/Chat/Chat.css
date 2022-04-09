@@ -72,3 +72,36 @@
     background-color: #d9fdd3;
     margin-left: auto;
 }
+
+.chat_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 52px;
+    padding: 5px 17px;
+    background-color: #f0f2f5;
+}
+
+.chat_footer > .MuiSvgIcon-root {
+    color: grey;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.chat_footer > form {
+    flex: 1;
+}
+
+.chat_footer > form > input {
+    width: -webkit-fill-available;
+    padding: 9px 12px 11px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    overflow: hidden;
+}
+
+.chat_footer > form > button {
+    display: none;
+}

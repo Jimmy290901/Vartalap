@@ -4,6 +4,9 @@ import Avatar from '@mui/material/Avatar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import MicIcon from '@mui/icons-material/Mic';
 
 function Chat() {
     return (
@@ -45,6 +48,15 @@ function Chat() {
                     </span>
                     <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
                 </p>
+            </div>
+            <div className="chat_footer">
+                <InsertEmoticonIcon />
+                <AttachFileIcon />
+                <form>
+                    <input placeholder="Type a message"/>
+                    <button type="submit">Send message</button>
+                </form>
+                <MicIcon />
             </div>
         </div>
     );
