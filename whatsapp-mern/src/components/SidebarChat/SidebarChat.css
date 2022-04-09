@@ -28,6 +28,7 @@
 
 .chat_info > h3 {
     font-size: 17px;
+    overflow: hidden;
 }
 
 .chat_info > p {

@@ -1,5 +1,41 @@
 .chat {
     display: flex;
     flex-direction: column;
-    flex: 80%;
+    flex: 0.7;
+}
+
+.chat_header {
+    display: flex;
+    padding: 20px;
+    background-color: #f0f2f5;
+    cursor: pointer;
+}
+
+
+.chat_header_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.chat_header_info > h3 {
+    font-size: 17px;
+    overflow: hidden;
+}
+
+.chat_header_info > p {
+    overflow: hidden;
+    font-size: 13px;
+    color: gray;
+}
+
+.chat_header_options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.messages {
+    flex: 1;
 }
