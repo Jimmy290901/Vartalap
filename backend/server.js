@@ -3,8 +3,8 @@ import express from "express";
 import mongoose from "mongoose";
 import Pusher from "pusher"
 import dotenv from "dotenv";
+import cors from "cors";
 
-// const dotenv = require("dotenv");
 dotenv.config();
 
 //Setting up app
@@ -12,6 +12,7 @@ const app = express();
 
 // Middlewares
 app.use(express.json());
+app.use(cors());
 
 // Setting app to listen to any assigned port or 8000 by default
 let port = process.env.PORT || 8000;
@@ -24,10 +25,24 @@ const password = process.env.DB_PASSWORD;
 // Connecting with DB
 mongoose.connect("mongodb+srv://"+username+":"+password+"@cluster0.cu4l4.mongodb.net/whatsappdb?retryWrites=true&w=majority");
 
+// Setting up Pusher
+const pusher = new Pusher({
+    appId : process.env.appId,
+    key : process.env.key,
+    secret : process.env.secret,
+    cluster : process.env.cluster,
+    useTLS : true 
+});
+
 // Implementing change streams over Messages collection
-mongoose.connection.once("open", () => {
-    Messages.watch().on("change", (change) => {
+mongoose.connection.once("open", () => {        //create changestream only once
+    Messages.watch().on("change", (change) => {     //changestream
         console.log(change);
+        if (change.operationType === "insert") {            
+            pusher.trigger("messages", "insert", change.fullDocument);
+        } else {
+            console.log("Error pushing the updates");
+        }
     });
 });
 
