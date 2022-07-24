@@ -1,7 +1,7 @@
 import {Messages} from "./models.js";
 import express from "express";
 import mongoose from "mongoose";
-import Pusher from "pusher"
+import Pusher from "pusher";
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -35,11 +35,12 @@ const pusher = new Pusher({
 });
 
 // Implementing change streams over Messages collection
-mongoose.connection.once("open", () => {        //create changestream only once
-    Messages.watch().on("change", (change) => {     //changestream
+mongoose.connection.once("open", () => {        //as we want to create changestream only once, so we add listener only once
+    Messages.watch().on("change", (change) => {     //watch() create a changestream on Messages model
         console.log(change);
+        //for change = "insert", trigger the "insert" event in "messages" channel and send the data
         if (change.operationType === "insert") {            
-            pusher.trigger("messages", "insert", change.fullDocument);
+            pusher.trigger("messages", "message-inserted", change.fullDocument);
         } else {
             console.log("Error pushing the updates");
         }

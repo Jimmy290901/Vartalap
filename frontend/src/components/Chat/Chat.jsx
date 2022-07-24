@@ -4,11 +4,9 @@ import Avatar from '@mui/material/Avatar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import MicIcon from '@mui/icons-material/Mic';
+import InputBar from "../InputBar/InputBar";
 
-function Chat() {
+function Chat(props) {
     return (
         <div className="chat">
             <div className="chat_header">
@@ -24,8 +22,20 @@ function Chat() {
                     </IconButton>                
                 </div>
             </div>
+
             <div className="chat_body">
-                <p className="chat_message">
+                {props.messages.map((message) => {
+                    return (
+                        <p className={`chat_message ${message.name==="Shubham Jain" && "user_message"}`}>
+                            <div className="chat_msg_username"><h3>{message.name}</h3></div>
+                            <span className="chat_msg_content">
+                                {message.content}
+                            </span>
+                            <div className="chat_msg_time">{message.timestamp}</div>
+                        </p>
+                    );
+                })}
+                {/* <p className="chat_message">
                     <div className="chat_msg_username"><h3>Name</h3></div>
                     <span className="chat_msg_content">
                         This is a Message
@@ -47,17 +57,9 @@ function Chat() {
                         This is a Message
                     </span>
                     <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
-                </p>
+                </p> */}
             </div>
-            <div className="chat_footer">
-                <InsertEmoticonIcon />
-                <AttachFileIcon />
-                <form>
-                    <input placeholder="Type a message"/>
-                    <button type="submit">Send message</button>
-                </form>
-                <MicIcon />
-            </div>
+            <InputBar />
         </div>
     );
 }
