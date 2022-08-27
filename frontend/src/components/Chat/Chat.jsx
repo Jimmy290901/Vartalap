@@ -59,7 +59,7 @@ function Chat(props) {
                     <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
                 </p> */}
             </div>
-            <InputBar />
+            <InputBar token={props.token} />
         </div>
     );
 }

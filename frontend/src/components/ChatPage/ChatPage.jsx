@@ -10,6 +10,7 @@ function ChatPage(props) {
     const [messages, setMessages] = useState([]);
 
     const fetchData = async (token) => {
+        console.log("fetchData() called.");
         await axios({
                 method: "get",
                 url: "http://localhost:8000/message/all",
@@ -63,7 +64,7 @@ function ChatPage(props) {
         <div className="ChatPage">
         <div className="chatpage_body">
             <Sidebar />
-            <Chat messages={messages} />
+            <Chat messages={messages} token={props.token} />
         </div>
         </div>
     );

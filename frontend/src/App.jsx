@@ -6,13 +6,13 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from
 function App() {
   const [authState, setAuthState] = useState(false || window.sessionStorage.getItem("authState") === "true");
   const [token, setToken] = useState("");
+
+  console.log(authState);
   
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (credentials) => {
       if (credentials) {
-        setAuthState(true);
-        window.sessionStorage.setItem("authState", "true");
         credentials.getIdToken().then((idToken) => {
           setToken(idToken);
         });
@@ -26,15 +26,12 @@ function App() {
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        // const user = result.user;        // The signed-in user info.
         setAuthState(true);
-        // setToken(token);
-        // window.sessionStorage.setItem("authState", "true");
+        window.sessionStorage.setItem("authState", "true");
         console.log("User successfully signed in !");
-        // ...
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
@@ -44,9 +41,9 @@ function App() {
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
         console.log("Error signing in user !");
-        console.log(errorCode);
-        console.log(errorMessage);
-        // ...
+        console.log("Error Code: " + errorCode);
+        console.log("Message: " + errorMessage);
+        console.log("Email: " + email);
       });
   }
 

@@ -5,7 +5,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import axios from "axios";
 
-function InputBar() {
+function InputBar(props) {
 
     const [input, setInput] = useState("");
 
@@ -19,8 +19,16 @@ function InputBar() {
             name: "Shubham Jain",
             content: input
         };
-        console.log(userMessage);
-        await axios.post("http://localhost:8000/message/new", userMessage).catch((error) => {
+        // console.log(userMessage);
+        const token = props.token;
+        await axios({
+            method: "post",
+            url: "http://localhost:8000/message/new", 
+            data: userMessage,
+            headers: {
+                Authorization : "Bearer " + token,
+            }
+        }).catch((error) => {
             console.log(error);
         });
         setInput("");
