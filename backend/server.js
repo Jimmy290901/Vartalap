@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import Pusher from "pusher";
 import dotenv from "dotenv";
 import cors from "cors";
+import bodyParser from "body-parser";
+import {verifyUser} from "./middlewares.js";
 
 dotenv.config();
 
@@ -11,8 +13,12 @@ dotenv.config();
 const app = express();
 
 // Middlewares
+app.use(bodyParser.urlencoded({
+    extended: true
+  }));
 app.use(express.json());
 app.use(cors());
+app.use(verifyUser);
 
 // Setting app to listen to any assigned port or 8000 by default
 let port = process.env.PORT || 8000;

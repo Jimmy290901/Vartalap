@@ -1,59 +1,64 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import Sidebar from "./components/Sidebar/Sidebar.jsx";
-import Chat from "./components/Chat/Chat.jsx";
-import Pusher from "pusher-js";
-import axios from "axios";
+import ChatPage from "./components/ChatPage/ChatPage.jsx";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 
 function App() {
-
-  const [messages, setMessages] = useState([]);
-
-  //Loads up the application initally with all messages
+  const [authState, setAuthState] = useState(false || window.sessionStorage.getItem("authState") === "true");
+  const [token, setToken] = useState("");
+  
   useEffect(() => {
-    axios({
-      method: "get",
-      url: "http://localhost:8000/message/all",
-    })
-    .then((res) => {
-      setMessages(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+    const auth = getAuth();
+    onAuthStateChanged(auth, (credentials) => {
+      if (credentials) {
+        setAuthState(true);
+        window.sessionStorage.setItem("authState", "true");
+        credentials.getIdToken().then((idToken) => {
+          setToken(idToken);
+        });
+      }
+    });
   }, []);
 
-  useEffect(() => {
-    //creating a pusher object
-    const pusher = new Pusher(process.env.REACT_APP_key, {    
-      cluster : process.env.REACT_APP_cluster,
-    });
-
-    //creating a channel "messages" by subscribing to it through pusher object
-    var channel = pusher.subscribe("messages");  
-    
-    //binding the channel to event "insert"
-    channel.bind("message-inserted", (newMessage) => {
-      setMessages([...messages, newMessage]);
-      // alert(JSON.stringify(data));
-    });
-
-    //returning the cleanup function to avoid setting up channels again when messages update
-    return () => {
-      channel.unbind("message-inserted");
-      channel.unsubscribe();
-    }
-  }, [messages]);
-
-
+  function authenticate() {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        setAuthState(true);
+        // setToken(token);
+        // window.sessionStorage.setItem("authState", "true");
+        console.log("User successfully signed in !");
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log("Error signing in user !");
+        console.log(errorCode);
+        console.log(errorMessage);
+        // ...
+      });
+  }
 
   return (
     <div className="App">
-      <div className="app_body">
-        <Sidebar />
-        <Chat messages={messages} />
-      </div>
-    </div>
+      {authState ? (
+          <ChatPage token={token}/>
+        ) : (
+          <button onClick={authenticate}>Log In with Google</button>
+        )
+      }
+    </div> 
   );
 }
 
