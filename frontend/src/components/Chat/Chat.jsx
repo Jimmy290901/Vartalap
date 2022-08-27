@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import "./Chat.css";
 import Avatar from '@mui/material/Avatar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -7,6 +7,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputBar from "../InputBar/InputBar";
 
 function Chat(props) {
+
+    const chatDisplay = useRef(null);
+
+    useEffect(()=> {
+        chatDisplay.current?.scrollIntoView({behavior: "smooth"});
+    }, [props.messages]);
+
     return (
         <div className="chat">
             <div className="chat_header">
@@ -23,7 +30,7 @@ function Chat(props) {
                 </div>
             </div>
 
-            <div className="chat_body">
+            <div className="chat_body" >
                 {props.messages.map((message) => {
                     return (
                         <p className={`chat_message ${message.name==="Shubham Jain" && "user_message"}`}>
@@ -58,6 +65,7 @@ function Chat(props) {
                     </span>
                     <div className="chat_msg_time">Sat, 9th March, 12:43 P.M</div>
                 </p> */}
+                <div ref={chatDisplay} />
             </div>
             <InputBar token={props.token} />
         </div>

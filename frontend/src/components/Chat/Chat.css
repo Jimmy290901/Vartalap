@@ -49,7 +49,7 @@
     border-radius: 7.5px;
     margin: 20px;
     padding: 6px 7px 8px 9px;
-    max-width: 70%;
+    max-width: 55%;
 }
 
 .chat_msg_username > h3 {
@@ -58,6 +58,7 @@
 
 .chat_msg_content {
     margin-right: 50px;
+    overflow-wrap: break-word;
 }
 
 .chat_msg_time {
