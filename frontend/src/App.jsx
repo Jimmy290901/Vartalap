@@ -6,18 +6,19 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from
 function App() {
   const [authState, setAuthState] = useState(false || window.sessionStorage.getItem("authState") === "true");
   const [token, setToken] = useState("");
-
-  console.log(authState);
   
   useEffect(() => {
     const auth = getAuth();
-    onAuthStateChanged(auth, (credentials) => {
+    console.log(auth.currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (credentials) => {
       if (credentials) {
+        console.log(credentials);
         credentials.getIdToken().then((idToken) => {
           setToken(idToken);
         });
       }
     });
+    return unsubscribe;
   }, []);
 
   function authenticate() {

@@ -1,14 +1,34 @@
 import mongoose from "mongoose"
 
-const messageSchema = new mongoose.Schema({
+var chatroomSchema = new mongoose.Schema({
+    name: String,
+    participants: [{
+        type: mongoose.Types.ObjectId,
+        ref: Users
+    }]
+}, {collection: "chatrooms"});
+
+var userSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    rooms: [{
+        type: mongoose.Types.ObjectId,
+        ref: Chatrooms
+    }]
+}, {collection: "users"});
+
+var messageSchema = new mongoose.Schema({
     content: String,
     timestamp: {
         type: Date,
         default: () => Date.now(),
     }, 
-    name: String
-});
+    userId: userSchema,
+    roomId: chatroomSchema
+}, {collection: "messages"});
 
-const Messages = mongoose.model("Message", messageSchema);
+var Messages = mongoose.model("Message", messageSchema);
+var Users = mongoose.model("User", userSchema);
+var Chatrooms = mongoose.model("Chatroom", chatroomSchema);
 
-export {Messages};      //named export as there could be more exports
+export {Messages, Users, Chatrooms};      //named export as there could be more exports

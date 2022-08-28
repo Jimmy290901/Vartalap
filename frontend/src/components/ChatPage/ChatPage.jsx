@@ -10,7 +10,6 @@ function ChatPage(props) {
     const [messages, setMessages] = useState([]);
 
     const fetchData = async (token) => {
-        console.log("fetchData() called.");
         await axios({
                 method: "get",
                 url: "http://localhost:8000/message/all",
