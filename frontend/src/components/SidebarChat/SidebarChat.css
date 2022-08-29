@@ -35,3 +35,7 @@
     overflow: hidden;
     font-size: 13px;
 }
+
+.selected-chat {
+    background-color: #EBEBEB;
+}

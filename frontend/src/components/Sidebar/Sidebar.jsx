@@ -8,7 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DonutLargeIcon from '@mui/icons-material/DonutLarge';
 import SearchIcon from '@mui/icons-material/Search';
 
-function Sidebar() {
+function Sidebar({rooms, currChat, setCurrChat}) {
     return (
         <div className="sidebar">
             <div className="sidebar_header">
@@ -32,9 +32,7 @@ function Sidebar() {
                 </div>                
             </div>
             <div className="sidebar_chats">
-                <SidebarChat />
-                <SidebarChat />
-                <SidebarChat />
+                {rooms.map((room, index) => <SidebarChat name={room.name} key={room.id} index={index} currChat={currChat} setCurrChat={setCurrChat} />)}
             </div>
         </div>
     );

@@ -6,35 +6,38 @@ import Pusher from "pusher-js";
 import axios from "axios";
   
 
-function ChatPage(props) {
-    const [messages, setMessages] = useState([]);
-
-    const fetchData = async (token) => {
-        await axios({
-                method: "get",
-                url: "http://localhost:8000/message/all",
-                headers: {
-                    Authorization : "Bearer " + token,
-                }
-            }).then((res) => {
-                setMessages(res.data);
-            }).catch((err) => {
-                console.log(err);
-            }
-        );
-    };
+function ChatPage({token, email}) {
+    const [data, setData] = useState([]);
+    const [currChat, setCurrChat] = useState(0);
 
     //Loads up the application initally with all messages
     useEffect(() => {
-        // console.log(props.token);
-        if (props.token) {
-            // console.log("GET request shooted");
-            fetchData(props.token);
-        } else {
-            // console.log("GET request not shooted");
-        }
-    }, [props.token]);
+        const fetchData = async (token) => {
+            await axios({
+                    method: "get",
+                    url: "http://localhost:8000/message/all",
+                    headers: {
+                        Authorization : "Bearer " + token,
+                    },
+                    params: {
+                        email: email
+                    }
+                }).then((res) => {
+                    setData(res.data);
+                }).catch((err) => {
+                    console.log(err);
+                }
+            );
+        };
 
+        if (token) {
+            fetchData(token);
+        } else {
+            console.log("Un-authorized user");
+        }
+    }, [token, email, data]);
+
+    /*
     useEffect(() => {
         //creating a pusher object
         const pusher = new Pusher(process.env.REACT_APP_key, {    
@@ -46,7 +49,7 @@ function ChatPage(props) {
         
         //binding the channel to event "insert"
         channel.bind("message-inserted", (newMessage) => {
-        setMessages([...messages, newMessage]);
+        // setMessages([...messages, newMessage]);      ..............ToDo
         // alert(JSON.stringify(data));
         });
 
@@ -55,16 +58,29 @@ function ChatPage(props) {
         channel.unbind("message-inserted");
         channel.unsubscribe();
         }
-    }, [messages]);
+    }, [data]);
+    */
 
+    const rooms = data.map((room) => {
+        return {
+            name: room.name,
+            id: room._id
+        }
+    });
 
+    let chatPgEle = null;
+    if (data.length !== 0) {
+        chatPgEle = (
+            <div className="chatpage_body">
+                <Sidebar rooms={rooms} currChat={currChat} setCurrChat={setCurrChat} />
+                <Chat data={data[currChat]} token={token} email={email} />
+            </div>
+        );
+    }
 
     return (
         <div className="ChatPage">
-        <div className="chatpage_body">
-            <Sidebar />
-            <Chat messages={messages} token={props.token} />
-        </div>
+            {chatPgEle}
         </div>
     );
 }

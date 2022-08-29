@@ -5,7 +5,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import axios from "axios";
 
-function InputBar(props) {
+function InputBar({token, email}) {
 
     const [input, setInput] = useState("");
 
@@ -15,16 +15,13 @@ function InputBar(props) {
 
     async function sendMessage(e) {
         e.preventDefault();
-        const userMessage = {
-            name: "Shubham Jain",
-            content: input
-        };
-        // console.log(userMessage);
-        const token = props.token;
         await axios({
             method: "post",
             url: "http://localhost:8000/message/new", 
-            data: userMessage,
+            data: {
+                email: email,
+                content: input
+            },
             headers: {
                 Authorization : "Bearer " + token,
             }

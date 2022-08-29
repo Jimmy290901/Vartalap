@@ -1,4 +1,4 @@
-import {Messages} from "./models.js";
+import {Chatrooms, Messages} from "./models.js";
 import express from "express";
 import mongoose from "mongoose";
 import Pusher from "pusher";
@@ -29,7 +29,6 @@ const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 
 // Connecting with DB
-// mongoose.connect("mongodb://"+username+":"+password+"@cluster0-shard-00-00.cu4l4.mongodb.net:27017,cluster0-shard-00-01.cu4l4.mongodb.net:27017,cluster0-shard-00-02.cu4l4.mongodb.net:27017/whatsappdb?ssl=true&replicaSet=atlas-cewtg3-shard-0&authSource=admin&retryWrites=true&w=majority");
 mongoose.connect("mongodb+srv://"+username+":"+password+"@cluster0.cu4l4.mongodb.net/whatsappdb?retryWrites=true&w=majority");
 
 // Setting up Pusher
@@ -70,11 +69,21 @@ app.post("/message/new", async (req, res) => {
 });
 
 app.get("/message/all", async (req, res) => {
-    await Messages.find((err, data) => {
-        if (err) {
-            res.status(500).send("Unable to fetch messages");
-        } else {
+    const email = req.query.email;
+    let data;
+    await Chatrooms.find({participants: {$elemMatch:{email: email}}}).lean().then(async (rooms) => {
+            data = rooms;
+            for (let idx = 0; idx < data.length; idx++) {
+                await Messages.find({roomId: data[idx]._id}).lean().then((messages) => {
+                    data[idx].messages = messages;
+                }).catch((err) => {
+                    console.log("Error: " + err);
+                    res.status(500).send("Unable to fetch messages");
+                });
+            }
             res.send(data);
-        }
+    }).catch((err) => {
+        console.log("Error: " + err);
+        res.status(500).send("Unable to fetch chatroom");
     });
 });

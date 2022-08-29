@@ -6,13 +6,13 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from
 function App() {
   const [authState, setAuthState] = useState(false || window.sessionStorage.getItem("authState") === "true");
   const [token, setToken] = useState("");
+  const [email, setEmail] = useState(null);
   
   useEffect(() => {
     const auth = getAuth();
-    console.log(auth.currentUser);
     const unsubscribe = onAuthStateChanged(auth, (credentials) => {
       if (credentials) {
-        console.log(credentials);
+        setEmail(credentials.email);
         credentials.getIdToken().then((idToken) => {
           setToken(idToken);
         });
@@ -51,7 +51,7 @@ function App() {
   return (
     <div className="App">
       {authState ? (
-          <ChatPage token={token}/>
+          <ChatPage token={token} email={email} />
         ) : (
           <button onClick={authenticate}>Log In with Google</button>
         )

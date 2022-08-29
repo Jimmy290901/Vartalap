@@ -6,21 +6,20 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBar from "../InputBar/InputBar";
 
-function Chat(props) {
-
+function Chat({data, token, email}) {
     const chatDisplay = useRef(null);
 
     useEffect(()=> {
         chatDisplay.current?.scrollIntoView({behavior: "smooth"});
-    }, [props.messages]);
+    }, [data]);
 
     return (
         <div className="chat">
             <div className="chat_header">
                 <Avatar />
                 <div className="chat_header_info">
-                    <h3>Room Name</h3>
-                    <p>Last seen: 12:43 P.M</p>
+                    <h3>{data.name}</h3>
+                    {/* <p>Last seen: 12:43 P.M</p> */}
                 </div>
                 <div className="chat_header_options">
                     <SearchIcon/>
@@ -31,14 +30,29 @@ function Chat(props) {
             </div>
 
             <div className="chat_body" >
-                {props.messages.map((message) => {
+                {data.messages.map((message) => {
+                    let timestamp = new Date(message.timestamp);
+                    let month;
+                    month = (timestamp.getMonth() + 1);
+                    if (timestamp.getMonth() < 9) {
+                        month = "0"+month;
+                    }
+                    let sign, hour = timestamp.getHours();
+                    if (hour >= 12) {
+                        sign = "P.M";
+                        hour = (hour > 12) ? hour-12 : hour;
+                    } else {
+                        sign = "A.M";
+                    }
+                    timestamp = timestamp.getDate() + "-" + month + "-" + timestamp.getFullYear() + " " + hour + ":" + timestamp.getMinutes() + " " + sign;
+                    
                     return (
-                        <p className={`chat_message ${message.name==="Shubham Jain" && "user_message"}`}>
+                        <p className={`chat_message ${message.sender_email===email && "user_message"}`}>
                             <div className="chat_msg_username"><h3>{message.name}</h3></div>
                             <span className="chat_msg_content">
                                 {message.content}
                             </span>
-                            <div className="chat_msg_time">{message.timestamp}</div>
+                            <div className="chat_msg_time">{timestamp}</div>
                         </p>
                     );
                 })}
@@ -67,7 +81,7 @@ function Chat(props) {
                 </p> */}
                 <div ref={chatDisplay} />
             </div>
-            <InputBar token={props.token} />
+            <InputBar token={token} email={email} />
         </div>
     );
 }
