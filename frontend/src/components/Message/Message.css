@@ -1,0 +1,31 @@
+.chat_message {
+    width: 100%;
+    background-color: white;
+    width: fit-content;
+    border-radius: 7.5px;
+    margin: 20px;
+    padding: 6px 7px 8px 9px;
+    max-width: 55%;
+}
+
+.user_message {
+    background-color: #d9fdd3;
+    margin-left: auto;
+}
+
+.chat_msg_username > h3 {
+    font-size: 12.8px;
+}
+
+.chat_msg_content {
+    margin-right: 50px;
+    overflow-wrap: break-word;
+}
+
+.chat_msg_time {
+    font-size: 0.7rem;
+    position: relative;
+    top: 5px;
+    margin-left: auto;
+    width: fit-content;
+}

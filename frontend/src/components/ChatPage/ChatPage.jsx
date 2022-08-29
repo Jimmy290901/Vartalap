@@ -35,7 +35,7 @@ function ChatPage({token, email}) {
         } else {
             console.log("Un-authorized user");
         }
-    }, [token, email, data]);
+    }, [token, email]);
 
     /*
     useEffect(() => {
