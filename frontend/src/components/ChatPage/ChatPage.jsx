@@ -7,8 +7,11 @@ import axios from "axios";
   
 
 function ChatPage({token, email}) {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({user_name: undefined, rooms: []});
     const [currChat, setCurrChat] = useState(0);
+    const [pusher, setPusher] = useState(new Pusher(process.env.REACT_APP_key, {    
+        cluster : process.env.REACT_APP_cluster,
+        }));
 
     //Loads up the application initally with all messages
     useEffect(() => {
@@ -37,20 +40,22 @@ function ChatPage({token, email}) {
         }
     }, [token, email]);
 
-    /*
+    // useEffect(() => {
+    //     //creating a pusher object
+    //     setPusher();
+    // }, []);
+    
     useEffect(() => {
-        //creating a pusher object
-        const pusher = new Pusher(process.env.REACT_APP_key, {    
-        cluster : process.env.REACT_APP_cluster,
-        });
 
         //creating a channel "messages" by subscribing to it through pusher object
         var channel = pusher.subscribe("messages");  
         
         //binding the channel to event "insert"
         channel.bind("message-inserted", (newMessage) => {
-        // setMessages([...messages, newMessage]);      ..............ToDo
-        // alert(JSON.stringify(data));
+            const modData = {...data};
+            const idx = modData.rooms.findIndex(room => room._id===newMessage.roomId);
+            modData.rooms[idx].messages.push(newMessage);
+            setData(modData);
         });
 
         //returning the cleanup function to avoid setting up channels again when messages update
@@ -58,10 +63,10 @@ function ChatPage({token, email}) {
         channel.unbind("message-inserted");
         channel.unsubscribe();
         }
-    }, [data]);
-    */
+    }, [data, pusher]);
+    
 
-    const rooms = data.map((room) => {
+    const rooms = data.rooms.map((room) => {
         return {
             name: room.name,
             id: room._id
@@ -69,11 +74,11 @@ function ChatPage({token, email}) {
     });
 
     let chatPgEle = null;
-    if (data.length !== 0) {
+    if (data.rooms.length !== 0) {
         chatPgEle = (
             <div className="chatpage_body">
                 <Sidebar rooms={rooms} currChat={currChat} setCurrChat={setCurrChat} />
-                <Chat data={data[currChat]} token={token} email={email} />
+                <Chat room={data.rooms[currChat]} token={token} email={email} name={data.user_name} />
             </div>
         );
     }

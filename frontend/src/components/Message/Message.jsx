@@ -23,7 +23,7 @@ function Message({message, email}) {
     
     return (
         <div className={`chat_message ${message.sender_email===email && "user_message"}`}>
-            <div className="chat_msg_username"><h3>{message.name}</h3></div>
+            <div className="chat_msg_username"><h3>{message.sender_email!==email && message.sender_name}</h3></div>
             <span className="chat_msg_content">
                 {message.content}
             </span>

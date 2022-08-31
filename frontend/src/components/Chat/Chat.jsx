@@ -7,19 +7,19 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputBar from "../InputBar/InputBar";
 import Message from "../Message/Message";
 
-function Chat({data, token, email}) {
+function Chat({room, token, email, name}) {
     const chatDisplay = useRef(null);
 
     useEffect(()=> {
         chatDisplay.current?.scrollIntoView({behavior: "smooth"});
-    }, [data]);
+    });
 
     return (
         <div className="chat">
             <div className="chat_header">
                 <Avatar />
                 <div className="chat_header_info">
-                    <h3>{data.name}</h3>
+                    <h3>{room.name}</h3>
                     {/* <p>Last seen: 12:43 P.M</p> */}
                 </div>
                 <div className="chat_header_options">
@@ -31,10 +31,10 @@ function Chat({data, token, email}) {
             </div>
 
             <div className="chat_body" >
-                {data.messages.map((message) => <Message message={message} key={message._id} email={email} /> )}
+                {room.messages.map((message) => <Message message={message} key={message._id} email={email} /> )}
                 <div ref={chatDisplay} />
             </div>
-            <InputBar token={token} email={email} />
+            <InputBar token={token} email={email} roomId={room._id} name={name} />
         </div>
     );
 }

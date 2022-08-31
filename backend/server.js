@@ -1,4 +1,4 @@
-import {Chatrooms, Messages} from "./models.js";
+import {Users, Chatrooms, Messages} from "./models.js";
 import express from "express";
 import mongoose from "mongoose";
 import Pusher from "pusher";
@@ -63,6 +63,8 @@ app.post("/message/new", async (req, res) => {
     await Messages.create(newMsg, (err, newMsg) => {
         if (err) {
             res.send("Error inserted message");
+        } else {
+            console.log("Message inserted successfully");
         }
     });
     res.send("Message inserted!")
@@ -70,12 +72,18 @@ app.post("/message/new", async (req, res) => {
 
 app.get("/message/all", async (req, res) => {
     const email = req.query.email;
-    let data;
+    let data = {};
+    await Users.findOne({email: email}).lean().then(async (user) => {
+        data.user_name = user.name;
+    }).catch((err) => {
+        console.log("Error: " + err);
+        res.status(500).send("Unable to fetch the user data");
+    });
     await Chatrooms.find({participants: {$elemMatch:{email: email}}}).lean().then(async (rooms) => {
-            data = rooms;
-            for (let idx = 0; idx < data.length; idx++) {
-                await Messages.find({roomId: data[idx]._id}).lean().then((messages) => {
-                    data[idx].messages = messages;
+            data.rooms = rooms;
+            for (let idx = 0; idx < data.rooms.length; idx++) {
+                await Messages.find({roomId: data.rooms[idx]._id}).lean().then((messages) => {
+                    data.rooms[idx].messages = messages;
                 }).catch((err) => {
                     console.log("Error: " + err);
                     res.status(500).send("Unable to fetch messages");

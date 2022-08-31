@@ -5,7 +5,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import axios from "axios";
 
-function InputBar({token, email}) {
+function InputBar({token, email, roomId, name}) {
 
     const [input, setInput] = useState("");
 
@@ -19,8 +19,10 @@ function InputBar({token, email}) {
             method: "post",
             url: "http://localhost:8000/message/new", 
             data: {
-                email: email,
-                content: input
+                sender_name: name,
+                sender_email: email,
+                content: input,
+                roomId: roomId
             },
             headers: {
                 Authorization : "Bearer " + token,
