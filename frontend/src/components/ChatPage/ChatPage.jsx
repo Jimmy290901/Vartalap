@@ -4,14 +4,12 @@ import Sidebar from "../Sidebar/Sidebar.jsx";
 import Chat from "../Chat/Chat.jsx";
 import Pusher from "pusher-js";
 import axios from "axios";
-  
 
 function ChatPage({token, email}) {
     const [data, setData] = useState({user_name: undefined, rooms: []});
     const [currChat, setCurrChat] = useState(0);
-    const [pusher, setPusher] = useState(new Pusher(process.env.REACT_APP_key, {    
-        cluster : process.env.REACT_APP_cluster,
-        }));
+    //creating a pusher object
+    const [pusher, setPusher] = useState(undefined);
 
     //Loads up the application initally with all messages
     useEffect(() => {
@@ -27,6 +25,9 @@ function ChatPage({token, email}) {
                     }
                 }).then((res) => {
                     setData(res.data);
+                    setPusher(new Pusher(process.env.REACT_APP_key, {    
+                        cluster : process.env.REACT_APP_cluster,
+                        }));
                 }).catch((err) => {
                     console.log(err);
                 }
@@ -39,29 +40,25 @@ function ChatPage({token, email}) {
             console.log("Un-authorized user");
         }
     }, [token, email]);
-
-    // useEffect(() => {
-    //     //creating a pusher object
-    //     setPusher();
-    // }, []);
     
     useEffect(() => {
+        if (pusher) {
+            //creating a channel "messages" by subscribing to it through pusher object
+            var channel = pusher.subscribe("messages");  
+            
+            //binding the channel to event "insert"
+            channel.bind("message-inserted", (newMessage) => {
+                const modData = {...data};
+                const idx = modData.rooms.findIndex(room => room._id===newMessage.roomId);
+                modData.rooms[idx].messages.push(newMessage);
+                setData(modData);
+            });
 
-        //creating a channel "messages" by subscribing to it through pusher object
-        var channel = pusher.subscribe("messages");  
-        
-        //binding the channel to event "insert"
-        channel.bind("message-inserted", (newMessage) => {
-            const modData = {...data};
-            const idx = modData.rooms.findIndex(room => room._id===newMessage.roomId);
-            modData.rooms[idx].messages.push(newMessage);
-            setData(modData);
-        });
-
-        //returning the cleanup function to avoid setting up channels again when messages update
-        return () => {
-        channel.unbind("message-inserted");
-        channel.unsubscribe();
+            //returning the cleanup function to avoid setting up channels again when messages update
+            return () => {
+                channel.unbind("message-inserted");
+                channel.unsubscribe();
+            }
         }
     }, [data, pusher]);
     

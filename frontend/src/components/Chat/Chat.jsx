@@ -20,7 +20,6 @@ function Chat({room, token, email, name}) {
                 <Avatar />
                 <div className="chat_header_info">
                     <h3>{room.name}</h3>
-                    {/* <p>Last seen: 12:43 P.M</p> */}
                 </div>
                 <div className="chat_header_options">
                     <SearchIcon/>
