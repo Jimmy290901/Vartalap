@@ -61,20 +61,12 @@ function ChatPage({token, email}) {
             }
         }
     }, [data, pusher]);
-    
-
-    const rooms = data.rooms.map((room) => {
-        return {
-            name: room.name,
-            id: room._id
-        }
-    });
 
     let chatPgEle = null;
     if (data.rooms.length !== 0) {
         chatPgEle = (
             <div className="chatpage_body">
-                <Sidebar rooms={rooms} currChat={currChat} setCurrChat={setCurrChat} />
+                <Sidebar data={data} setData={setData} currChat={currChat} setCurrChat={setCurrChat} token={token} email={email} />
                 <Chat room={data.rooms[currChat]} token={token} email={email} name={data.user_name} />
             </div>
         );

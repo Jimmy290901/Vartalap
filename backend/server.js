@@ -46,15 +46,72 @@ mongoose.connection.once("open", () => {        //as we want to create changestr
         //for change = "insert", trigger the "insert" event in "messages" channel and send the data
         if (change.operationType === "insert") {            
             pusher.trigger("messages", "message-inserted", change.fullDocument);
-        } else {
-            console.log("Error pushing the updates");
         }
     });
+    // Chatrooms.watch().on("change", (change) => {
+    //     if (change.operationType === "update") {
+    //         console.log(change);
+    //     }
+    // })
 });
 
 // Implementing API Routes
 app.get("/", (req, res) => {
     res.send("<h1>Hello World</h1>");
+});
+
+app.post("/room/join", async (req, res) => {
+    const roomName = req.body.roomName;
+    await Chatrooms.findOne({roomName: roomName}).then(async (room) => {
+        if (room) {
+            const email = req.body.email;
+            const roomid = room._id;
+            await Users.findOne({email: email}).then(async (user) => {
+                if (user.rooms.includes(roomid)) {
+                    res.send({
+                        status: "error",
+                        message: "Already joined the room"
+                    });
+                } else {
+                    user.rooms.push(roomid);
+                    await user.save();      //adding new roomid to rooms within the user's document
+                    const userEntry = {
+                        name: user.name,
+                        email: user.email
+                    };
+                    room.participants.push(userEntry);
+                    await room.save();      //adding new userid to participants within the room's document
+                    await Messages.find({roomId: roomid}).lean().then((messages) => {
+                        res.send({
+                            status: "success",
+                            message: "Successfully added to the room",
+                            roomData: {
+                                _id: room._id.toString(),
+                                name: room.name,
+                                participants: room.participants,
+                                roomName: room.roomName,
+                                messages: [...messages]
+                            }
+                        });
+                    }).catch((err) => {
+                        console.log("Error: " + err);
+                        res.status(500).send("Error fetching messages"); 
+                    });
+                }
+            }).catch((err) => {
+                console.log("Error: " + err);
+                res.status(500).send("Error fetching user");
+            });
+        } else {
+            res.send({
+                status: "error",
+                message: "Room doesn't exist"
+            });
+        }
+    }).catch((err) => {
+        console.log("Error: " + err);
+        res.status(500).send("Error finding the chatroom");
+    })
 });
 
 app.post("/message/new", async (req, res) => {

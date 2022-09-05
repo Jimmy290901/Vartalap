@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import "./Sidebar.css";
 import SidebarChat from "../SidebarChat/SidebarChat.jsx";
 import Avatar from '@mui/material/Avatar';
@@ -7,14 +7,30 @@ import IconButton from '@mui/material/IconButton'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DonutLargeIcon from '@mui/icons-material/DonutLarge';
 import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '@mui/icons-material/Add';
+import JoinRoomPopup from "../JoinRoomPopup/JoinRoomPopup.jsx";
 
-function Sidebar({rooms, currChat, setCurrChat}) {
+function Sidebar({data, setData, currChat, setCurrChat, token, email}) {
+    const [showModal, setShowModal] = useState(false);
+    const [rooms, setRooms] = useState([]);
+    useEffect(()=>{
+        setRooms(data.rooms.map((room) => {
+            return {
+                name: room.name,
+                id: room._id
+            }
+        }));
+    }, [data]);
+    function handleModal() {
+        setShowModal(true);
+    }
+
     return (
         <div className="sidebar">
             <div className="sidebar_header">
                 <Avatar src="https://avatars.githubusercontent.com/u/67311906?s=40&v=4"/>
                 <div className="sidebar_options">                    
-                    <IconButton>
+                    {/* <IconButton>
                         <DonutLargeIcon />
                     </IconButton>
                     <IconButton>
@@ -22,6 +38,9 @@ function Sidebar({rooms, currChat, setCurrChat}) {
                     </IconButton>
                     <IconButton>
                         <MoreVertIcon />
+                    </IconButton> */}
+                    <IconButton onClick={handleModal}>
+                        <AddIcon />
                     </IconButton>
                 </div>
             </div>
@@ -34,6 +53,7 @@ function Sidebar({rooms, currChat, setCurrChat}) {
             <div className="sidebar_chats">
                 {rooms.map((room, index) => <SidebarChat name={room.name} key={room.id} index={index} currChat={currChat} setCurrChat={setCurrChat} />)}
             </div>
+            {showModal && <JoinRoomPopup showModal={showModal} setShowModal={setShowModal} token={token} email={email} data={data} setData={setData} />}
         </div>
     );
 }

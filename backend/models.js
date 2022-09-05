@@ -2,6 +2,11 @@ import mongoose from "mongoose"
 
 var chatroomSchema = new mongoose.Schema({
     name: String,
+    roomName: {
+        type: String,
+        unique: true,
+        required: [true, "Room Name is required"],
+    },
     participants: [{
         name: String,
         email: String
