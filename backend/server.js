@@ -48,11 +48,6 @@ mongoose.connection.once("open", () => {        //as we want to create changestr
             pusher.trigger(change.fullDocument.roomId.toString(), "message-inserted", change.fullDocument);
         }
     });
-    // Chatrooms.watch().on("change", (change) => {
-    //     if (change.operationType === "update") {
-    //         console.log(change);
-    //     }
-    // })
 });
 
 // Implementing API Routes
@@ -112,6 +107,37 @@ app.post("/room/join", async (req, res) => {
         console.log("Error: " + err);
         res.status(500).send("Error finding the chatroom");
     })
+});
+
+app.put("/room/leave", async (req,res) => {
+    const email = req.body.email, roomName = req.body.roomName;
+    let user;
+    await Users.findOne({email: email}).then((userFound) => {
+        user = userFound;
+    }).catch((err) => {
+        console.log("Error: " + err);
+        res.status(500).send("Error finding the user");
+    });
+    let room;
+    await Chatrooms.findOne({roomName:roomName}).then((roomFound) => {
+        room = roomFound;
+    }).catch((err) => {
+        console.log("Error: " + err);
+        res.status(500).send("Error finding the chatroom");
+    });
+    //remove room from user
+    let idx = user.rooms.indexOf(room._id);
+    user.rooms.splice(idx,1);
+    await user.save();
+
+    //remove user as participant from the room
+    idx = room.participants.indexOf({name:user.name, email:email});
+    room.participants.splice(idx,1);
+    await room.save();
+
+    res.send({
+        status: "success"
+    });
 });
 
 app.post("/message/new", async (req, res) => {

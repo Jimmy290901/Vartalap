@@ -4,10 +4,11 @@ import Avatar from '@mui/material/Avatar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import Button from "@mui/material/Button";
 import InputBar from "../InputBar/InputBar";
 import Message from "../Message/Message";
 
-function Chat({room, token, email, name}) {
+function Chat({room, token, email, name, leaveChannel}) {
     const chatDisplay = useRef(null);
 
     useEffect(()=> {
@@ -22,10 +23,12 @@ function Chat({room, token, email, name}) {
                     <h3>{room.name}</h3>
                 </div>
                 <div className="chat_header_options">
-                    <SearchIcon/>
+                    {/* <SearchIcon/>
                     <IconButton>
                         <MoreVertIcon/>
-                    </IconButton>                
+                    </IconButton>                 */}
+                    <Button variant="outlined" onClick={()=>leaveChannel(room.roomName)}>Leave</Button>
+
                 </div>
             </div>
 

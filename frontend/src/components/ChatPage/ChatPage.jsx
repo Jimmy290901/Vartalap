@@ -13,7 +13,7 @@ function ChatPage({token, email}) {
 
     //Loads up the application initally with all messages
     useEffect(() => {
-        const fetchData = async (token) => {
+        const fetchData = async () => {
             await axios({
                     method: "get",
                     url: "http://localhost:8000/message/all",
@@ -35,7 +35,7 @@ function ChatPage({token, email}) {
         };
 
         if (token) {
-            fetchData(token);
+            fetchData();
         } else {
             console.log("Un-authorized user");
         }
@@ -67,19 +67,45 @@ function ChatPage({token, email}) {
         }
     }, [data, pusher]);
 
-    let chatPgEle = null;
-    if (data.rooms.length !== 0) {
-        chatPgEle = (
-            <div className="chatpage_body">
-                <Sidebar data={data} setData={setData} currChat={currChat} setCurrChat={setCurrChat} token={token} email={email} />
-                <Chat room={data.rooms[currChat]} token={token} email={email} name={data.user_name} />
-            </div>
-        );
+    function leaveChannel(roomName) {
+        const reqToLeave = async () => {
+            await axios({
+                method: "put",
+                url: "http://localhost:8000/room/leave",
+                headers: {
+                    Authorization : "Bearer " + token,
+                },
+                data: {
+                    email: email,
+                    roomName: roomName
+                }
+            }).then((res) => {
+                if (res.data.status === "success") {
+                    const modData = {...data};
+                    const idx = modData.rooms.findIndex(room => room.roomName === roomName);
+                    modData.rooms.splice(idx, 1);
+                    setCurrChat(0);
+                    setData(modData);
+                } else {
+                    console.log("Server error");
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        };
+        if (token) {
+            reqToLeave();
+        } else {
+            console.log("Un-authorized user");
+        }
     }
 
     return (
         <div className="ChatPage">
-            {chatPgEle}
+            <div className="chatpage_body">
+                <Sidebar data={data} setData={setData} currChat={currChat} setCurrChat={setCurrChat} token={token} email={email} />
+                {data.rooms.length !== 0 && <Chat room={data.rooms[currChat]} token={token} email={email} name={data.user_name} leaveChannel={leaveChannel} />}
+            </div>
         </div>
     );
 }
