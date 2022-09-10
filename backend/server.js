@@ -43,9 +43,9 @@ const pusher = new Pusher({
 // Implementing change streams over Messages collection
 mongoose.connection.once("open", () => {        //as we want to create changestream only once, so we add listener only once
     Messages.watch().on("change", (change) => {     //watch() create a changestream on Messages model
-        //for change = "insert", trigger the "insert" event in "messages" channel and send the data
-        if (change.operationType === "insert") {            
-            pusher.trigger("messages", "message-inserted", change.fullDocument);
+        //for change = "insert", trigger the "message-inserted" event in respective channel and send the data
+        if (change.operationType === "insert") {     
+            pusher.trigger(change.fullDocument.roomId.toString(), "message-inserted", change.fullDocument);
         }
     });
     // Chatrooms.watch().on("change", (change) => {

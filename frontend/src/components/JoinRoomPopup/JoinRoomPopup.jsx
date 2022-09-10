@@ -7,7 +7,7 @@ import "./JoinRoomPopup.css";
 import { Button } from "@mui/material";
 import axios from "axios";
 
-function JoinRoomPopup({showModal, setShowModal, token, email, data, setData}) {
+function JoinRoomPopup({showModal, setShowModal, token, email, setData}) {
     const [roomName, setRoomName] = useState("");
     const [inputErr, setInputErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");

@@ -43,21 +43,26 @@ function ChatPage({token, email}) {
     
     useEffect(() => {
         if (pusher) {
-            //creating a channel "messages" by subscribing to it through pusher object
-            var channel = pusher.subscribe("messages");  
-            
-            //binding the channel to event "insert"
-            channel.bind("message-inserted", (newMessage) => {
-                const modData = {...data};
-                const idx = modData.rooms.findIndex(room => room._id===newMessage.roomId);
-                modData.rooms[idx].messages.push(newMessage);
-                setData(modData);
-            });
+            let channels = [];
+            let totalRooms = data.rooms.length;
+            for (let i = 0; i < totalRooms; i++) {
+                //creating a channel for each room of user by subscribing to it through pusher object
+                channels.push(pusher.subscribe(data.rooms[i]._id));  
+                
+                //binding the channel to event "message-inserted"
+                channels[i].bind("message-inserted", (newMessage) => {
+                    const modData = {...data};
+                    modData.rooms[i].messages.push(newMessage);
+                    setData(modData);
+                });
+            }
 
             //returning the cleanup function to avoid setting up channels again when messages update
             return () => {
-                channel.unbind("message-inserted");
-                channel.unsubscribe();
+                for (let i = 0; i < totalRooms; i++) {
+                    channels[i].unbind("message-inserted");
+                    channels[i].unsubscribe();
+                }
             }
         }
     }, [data, pusher]);

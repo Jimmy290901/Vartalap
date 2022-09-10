@@ -53,7 +53,7 @@ function Sidebar({data, setData, currChat, setCurrChat, token, email}) {
             <div className="sidebar_chats">
                 {rooms.map((room, index) => <SidebarChat name={room.name} key={room.id} index={index} currChat={currChat} setCurrChat={setCurrChat} />)}
             </div>
-            {showModal && <JoinRoomPopup showModal={showModal} setShowModal={setShowModal} token={token} email={email} data={data} setData={setData} />}
+            {showModal && <JoinRoomPopup showModal={showModal} setShowModal={setShowModal} token={token} email={email} setData={setData} />}
         </div>
     );
 }
