@@ -2,20 +2,19 @@
 
 # dependencies
 /node_modules
-/src/config
 /.pnp
 .pnp.js
 
 .env
+
+# firebase file
+/src/config
 
 # testing
 /coverage
 
 # production
 /build
-
-# firebase file
-/src/firebase.js
 
 # misc
 .DS_Store
